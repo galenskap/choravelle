@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -27,6 +29,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'profile_photo_path',
+        'pupitre_id',
+        'is_active',
+        'is_admin',
+        'email_notifications',
+        'last_read_timestamp'
     ];
 
     /**
@@ -60,6 +68,20 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'is_admin' => 'boolean',
+            'email_notifications' => 'boolean',
+            'last_read_timestamp' => 'datetime',
         ];
+    }
+
+    public function pupitre(): BelongsTo
+    {
+        return $this->belongsTo(Pupitre::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'from_user_id');
     }
 }
